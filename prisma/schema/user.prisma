@@ -1,17 +1,17 @@
 model User {
-    id String @id @default(uuid())
-    name String
-    email String @unique
-    password String
-    role Role
-    
-    activeStatus ActiveStatus @default(ACTIVE)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  role     Role
 
-    properties Property[] @relation("LandlordProperties")
-    rentalRequests RentalRequest[] @relation("TenantRentalRequests")
-    reviews Reviews[] @relation("TenantReviews")
+  activeStatus ActiveStatus @default(ACTIVE)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 
-    @@map("users")
+  properties     Property[]      @relation("LandlordProperties")
+  rentalRequests RentalRequest[] @relation("TenantRentalRequests")
+  reviews        Review[]        @relation("TenantReviews")
+
+  @@map("users")
 }
