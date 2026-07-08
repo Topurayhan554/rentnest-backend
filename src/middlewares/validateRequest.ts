@@ -1,14 +1,17 @@
 import { NextFunction, Request, Response } from "express";
-import { ZodObject } from "zod";
+import { ZodTypeAny } from "zod";
 import { catchAsync } from "../utils/catchAsync";
 
-export const validateRequest = (schema: ZodObject) => {
+export const validateRequest = (schema: ZodTypeAny) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    await schema.parseAsync({
+    const parsed = (await schema.parseAsync({
       body: req.body,
       query: req.query,
       params: req.params,
-    });
+    })) as any;
+
+    req.body = parsed.body;
+
     next();
   });
 };

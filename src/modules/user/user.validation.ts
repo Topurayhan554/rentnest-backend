@@ -1,4 +1,4 @@
-import { email, z } from "zod";
+import { z } from "zod";
 
 const registerValidationSchema = z.object({
   body: z.object({
@@ -6,7 +6,7 @@ const registerValidationSchema = z.object({
       .string()
       .min(1, { message: "Name is required" })
       .min(2, { message: "Name must be at least 2 characters" }),
-    email: z.string().email({ message: "Invalid email" }),
+    email: z.email({ message: "Invalid email" }),
 
     password: z.string().min(6, {
       message: "Password must be at least 6 characters",
@@ -20,7 +20,7 @@ const registerValidationSchema = z.object({
 const updateProfileValidationSchema = z.object({
   body: z.object({
     name: z.string().min(2).optional(),
-    email: z.string().email().optional(),
+    email: z.email().optional(),
   }),
 });
 
