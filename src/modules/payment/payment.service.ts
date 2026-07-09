@@ -1,8 +1,13 @@
 import httpStatus from "http-status";
+import Stripe from "stripe";
 import { prisma } from "../../lib/prisma";
 import { stripe } from "../../lib/stripe";
 import config from "../../config";
 import { ICreatePayment } from "./payment.interface";
+import {
+  handleCheckoutCompleted,
+  handleCheckoutExpired,
+} from "./payment.utils";
 import { AppError } from "../../utils/app.Error";
 
 const createPaymentSession = async (
@@ -68,34 +73,30 @@ const createPaymentSession = async (
     },
   });
 
-  return { checkoutUrl: session.url };
+  return { paymentUrl: session.url };
 };
 
-const confirmPaymentWebhook = async (event: any) => {
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
-    const rentalRequestId = session.metadata?.rentalRequestId;
+const handleWebhook = async (payload: Buffer, signature: string) => {
+  const endpointSecret = config.stripe_webhook_secret;
 
-    if (!rentalRequestId) return;
+  const event = stripe.webhooks.constructEvent(
+    payload,
+    signature,
+    endpointSecret,
+  );
 
-    await prisma.$transaction([
-      prisma.payment.update({
-        where: { transactionId: session.id },
-        data: { status: "COMPLETED", paidAt: new Date() },
-      }),
-      prisma.rentalRequest.update({
-        where: { id: rentalRequestId },
-        data: { status: "ACTIVE" },
-      }),
-    ]);
-  }
-
-  if (event.type === "checkout.session.expired") {
-    const session = event.data.object;
-    await prisma.payment.update({
-      where: { transactionId: session.id },
-      data: { status: "FAILED" },
-    });
+  switch (event.type) {
+    case "checkout.session.completed":
+      await handleCheckoutCompleted(
+        event.data.object as Stripe.Checkout.Session,
+      );
+      break;
+    case "checkout.session.expired":
+      await handleCheckoutExpired(event.data.object as Stripe.Checkout.Session);
+      break;
+    default:
+      console.log(`Unhandled event type ${event.type}.`);
+      break;
   }
 };
 
@@ -131,7 +132,7 @@ const getSinglePaymentFromDB = async (
 
 export const paymentService = {
   createPaymentSession,
-  confirmPaymentWebhook,
+  handleWebhook,
   getMyPaymentsFromDB,
   getSinglePaymentFromDB,
 };

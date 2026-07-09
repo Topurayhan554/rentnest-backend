@@ -3,9 +3,6 @@ import { Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { paymentService } from "./payment.service";
-import { stripe } from "../../lib/stripe";
-import config from "../../config";
-import { AppError } from "../../utils/app.Error";
 
 const createPayment = catchAsync(async (req: Request, res: Response) => {
   const result = await paymentService.createPaymentSession(
@@ -22,22 +19,7 @@ const createPayment = catchAsync(async (req: Request, res: Response) => {
 
 const confirmPayment = catchAsync(async (req: Request, res: Response) => {
   const signature = req.headers["stripe-signature"] as string;
-  let event;
-
-  try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      signature,
-      config.stripe_webhook_secret,
-    );
-  } catch (err: any) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      `Webhook signature verification failed: ${err.message}`,
-    );
-  }
-
-  await paymentService.confirmPaymentWebhook(event);
+  await paymentService.handleWebhook(req.body, signature);
   res.status(httpStatus.OK).send({ received: true });
 });
 
