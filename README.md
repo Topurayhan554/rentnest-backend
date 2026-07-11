@@ -12,8 +12,8 @@ RentNest is a backend REST API for a rental property marketplace. Landlords can 
 |---|---|
 | **Backend Repo** | https://github.com/Topurayhan554/rentnest-backend |
 | **Live API** | https://rentnest-backend-rouge.vercel.app/ |
-| **API Documentation (Postman)** | *[paste your published Postman collection link here]* |
-| **Demo Video** | *[paste your Google Drive / Loom video link here]* |
+| **API Documentation (Postman)** | *[https://drive.google.com/file/d/1Zr1JfZnEaj6bT0oLWzMQCGXGkqORb4R0/view?usp=drive_link]* |
+| **Demo Video** | *[https://drive.google.com/file/d/1DFmQesdy53YiH8eH4Ok8wbxFBiiB6HuY/view?usp=drive_link]* |
 
 ### 🔑 Admin Credentials
 ```
