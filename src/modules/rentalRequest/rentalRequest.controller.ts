@@ -50,7 +50,7 @@ const getLandlordRentalRequests = catchAsync(
 const getSingleRentalRequest = catchAsync(
   async (req: Request, res: Response) => {
     const request = await rentalRequestService.getSingleRentalRequestFromDB(
-      req.params.id,
+      req.params.id as string,
       req.user!.id,
       req.user!.role,
     );
@@ -66,7 +66,7 @@ const getSingleRentalRequest = catchAsync(
 const updateRentalRequestStatus = catchAsync(
   async (req: Request, res: Response) => {
     const updated = await rentalRequestService.updateRentalRequestStatusInDB(
-      req.params.id,
+      req.params.id as string,
       req.user!.id,
       req.body,
     );

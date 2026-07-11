@@ -29,7 +29,9 @@ const getAllProperties = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getSingleProperty = catchAsync(async (req: Request, res: Response) => {
-  const property = await propertyService.getSinglePropertyFromDB(req.params.id);
+  const property = await propertyService.getSinglePropertyFromDB(
+    req.params.id as string,
+  );
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
