@@ -16,7 +16,7 @@ import { landlordRoutes } from "./modules/landlord/landlord.route";
 
 const app: Application = express();
 
-// Stripe webhook needs raw body — MUST be registered BEFORE express.json()
+// Stripe webhook needs raw body MUST be registered BEFORE express.json()....
 app.use("/api/payments/confirm", express.raw({ type: "application/json" }));
 
 app.use(express.json());
